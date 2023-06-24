@@ -17,16 +17,36 @@
         android:backgroundTint="@color/black"
         android:layout_marginTop="16dp"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/loadButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        app:backgroundTint="@color/black"
-        android:background="@drawable/ic_add"
-        android:backgroundTint="@color/black"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/applyButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            app:backgroundTint="@color/black"
+            android:background="@drawable/ic_apply"
+            android:backgroundTint="@color/black"
+            android:layout_marginTop="16dp"
+            android:layout_toLeftOf="@id/loadButton"
+            android:visibility="gone"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loadButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            app:backgroundTint="@color/black"
+            android:background="@drawable/ic_add"
+            android:backgroundTint="@color/black"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:visibility="visible"/>
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/imageView"
@@ -55,8 +75,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/SeekBarStyle"
-            android:max="50"
-            android:min="-50"
+            android:max="100"
+            android:min="-100"
             android:progress="5" />
 
     </FrameLayout>
@@ -77,6 +97,7 @@
             android:src="@drawable/ic_brightness"/>
 
         <ImageView
+            android:id="@+id/imageCrop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -90,12 +111,14 @@
             android:src="@drawable/ic_filters"/>
 
         <ImageView
+            android:id="@+id/imageSticker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/ic_sticker"/>
 
         <ImageView
+            android:id="@+id/imageText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="4dp"
