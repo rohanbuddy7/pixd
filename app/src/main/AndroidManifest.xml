@@ -15,16 +15,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pixd"
         tools:targetApi="31" >
-        <activity android:name=".ui.MainActivity"
+        <activity android:name=".ui.main.MainActivity"
             android:exported="true">
         </activity>
-        <activity android:name=".ui.SplashActivity"
+        <activity android:name=".ui.splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.CropActivity"/>
     </application>
 
 </manifest>

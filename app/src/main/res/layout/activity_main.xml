@@ -1,72 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.MainActivity">
+    tools:context=".ui.main.MainActivity">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/backButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        app:backgroundTint="@color/black"
-        android:background="@drawable/ic_back"
-        android:backgroundTint="@color/black"
-        android:layout_marginTop="16dp"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/applyButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            app:backgroundTint="@color/black"
-            android:background="@drawable/ic_apply"
-            android:backgroundTint="@color/black"
-            android:layout_marginTop="16dp"
-            android:layout_toLeftOf="@id/loadButton"
-            android:visibility="gone"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/loadButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            app:backgroundTint="@color/black"
-            android:background="@drawable/ic_add"
-            android:backgroundTint="@color/black"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="16dp"
-            android:visibility="visible"/>
-
-    </LinearLayout>
-
-    <ImageView
-        android:id="@+id/imageView"
+    <FrameLayout
+        android:id="@+id/topContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/frameControllerBrightness"
-        android:layout_below="@id/loadButton"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_placeholder_view_vector" />
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/frame"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/backButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            app:backgroundTint="@color/black"
+            android:background="@drawable/ic_back"
+            android:backgroundTint="@color/black"
+            android:layout_marginTop="16dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/applyButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                app:backgroundTint="@color/black"
+                android:background="@drawable/ic_apply"
+                android:backgroundTint="@color/black"
+                android:layout_marginTop="16dp"
+                android:layout_toLeftOf="@id/loadButton"
+                android:visibility="gone"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loadButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                app:backgroundTint="@color/black"
+                android:background="@drawable/ic_add"
+                android:backgroundTint="@color/black"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="16dp"
+                android:visibility="visible"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/topContainer"
+        app:layout_constraintBottom_toTopOf="@id/bottomLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/zone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_placeholder_view_vector"/>
+
+            <com.rohan.pixd.utils.MeasureCropView
+                android:id="@+id/xxd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/frameControllerBrightness"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/bottomLayout"
+        app:layout_constraintBottom_toTopOf="@id/bottomLayout"
         android:visibility="gone"
         android:padding="20dp">
 
@@ -84,6 +119,7 @@
     <LinearLayout
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:padding="5dp"
@@ -128,7 +164,7 @@
     </LinearLayout>
 
 
-    <Button
+    <!--<Button
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -136,6 +172,6 @@
         android:layout_below="@id/imageView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:visibility="gone"/>
+        android:visibility="gone"/>-->
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

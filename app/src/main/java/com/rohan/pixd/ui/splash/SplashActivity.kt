@@ -1,9 +1,10 @@
-package com.rohan.pixd.ui
+package com.rohan.pixd.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.rohan.pixd.R
+import com.rohan.pixd.ui.main.MainActivity
 
 class SplashActivity : AppCompatActivity() {
 
