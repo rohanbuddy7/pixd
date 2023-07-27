@@ -9,6 +9,8 @@ import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
@@ -24,15 +26,20 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.rohan.pixd.R
+import com.rohan.pixd.ui.sticker.SticketBottomSheet
 import com.rohan.pixd.utils.FilterHelper
 import com.rohan.pixd.utils.MeasureCropView
+import com.rohan.pixd.utils.MoveableForegroundView
 import com.rohan.pixd.utils.PermissionHelper
+import com.rohan.pixd.utils.StickerHelper
 
 
-class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListener {
+class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListener,
+    SticketBottomSheet.BottomSheetListener {
 
     private val brightness: String = "brightness"
     private val crop: String = "crop"
@@ -60,10 +67,21 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     private lateinit var featureText: ImageView
     private lateinit var seekBarBrightness: SeekBar
     private lateinit var frameControllerBrightness: FrameLayout
+    private lateinit var frameProgress: FrameLayout
     private var seekBarValue: Int? = 0
     private var measureBoxViewx: MeasureCropView? = null
     private var zone: RelativeLayout? = null
     private var frame: ConstraintLayout? = null
+    private var stickerBs: SticketBottomSheet? = null
+    private var moveableForegroundView: MoveableForegroundView? = null
+    private var stickerX: Int = 0;
+    private var stickerY: Int = 0;
+    private var foregroundStickerBitmap: Bitmap? = null;
+
+    companion object{
+        var stickerWidth = 500;
+        var stickerHeight = 500;
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +102,8 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         measureBoxViewx = findViewById(R.id.xxd)
         zone = findViewById(R.id.zone)
         frame = findViewById(R.id.frame)
+        moveableForegroundView = findViewById(R.id.moveableForegroundView)
+        frameProgress = findViewById(R.id.frameProgress)
 
         loadButton.setOnClickListener {
             if (PermissionHelper.checkPermissions(this)) {
@@ -207,8 +227,32 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
                     resetThings()
                 }
             }
+            sticker -> {
+                workingBitmap?.let {
+                    foregroundStickerBitmap?.let {
+                        workingBitmap = StickerHelper().combineBitmaps(
+                            workingBitmap!!, foregroundStickerBitmap!!, stickerX, stickerY)
+                        loader(true);
+                        Handler().postDelayed({
+                            loader(false);
+                            imageView.setImageBitmap(workingBitmap)
+                            somethingChanged.postValue(false)
+                            resetThings()
+                        },2000)
+                    }
+                }
+
+            }
         }
 
+    }
+
+    fun loader(show: Boolean){
+        if(show){
+            frameProgress.visibility = View.VISIBLE
+        } else {
+            frameProgress.visibility = View.GONE
+        }
     }
 
     private fun applyFilterEffect(bitmap: Bitmap): Bitmap {
@@ -295,7 +339,9 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
                     //resizeBitmap(it)
                     workingBitmap = upscaleBitmapToFitScreenWidth(it, this)
                 }
+                loader(true);
                 Handler().postDelayed({
+                    loader(false);
                     measureBoxViewx?.setDefaultBoxSize(
                         imageView.left.toFloat(),
                         imageView.top.toFloat(),
@@ -323,9 +369,10 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
 
         showSticker.observe(this, Observer {
             if(it){
-
+                stickerBs = SticketBottomSheet();
+                stickerBs?.show(supportFragmentManager, "")
             } else {
-
+                moveableForegroundView?.visibility = View.GONE
             }
         })
 
@@ -412,31 +459,38 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         return workingBitmap!!
     }
 
-    fun resizeBitmap( bitmap: Bitmap){
-        // Original bitmap
-        val originalBitmap = bitmap
+    override fun onStickerDataReceived(stickerDrawable: Int) {
+        stickerBs?.dismissAllowingStateLoss();
+        moveableForegroundView?.visibility = View.VISIBLE
+        somethingChanged.postValue(true)
+        foregroundStickerBitmap = getBitmapFromDrawable(this, stickerDrawable)
 
-        val metrics = resources.displayMetrics
-        val screenWidth = metrics.widthPixels
-        val screenHeight = metrics.heightPixels
-        val increaseWidth = screenWidth - bitmap.width
-        val increaseHeight = screenHeight - bitmap.height
-
-        // Desired new width
-        val newWidth: Int = originalBitmap.width + increaseWidth // Replace increaseAmount with the desired amount to increase the width
-
-        // Calculate the scaling factor for width
-        val scaleWidth = newWidth.toFloat() / originalBitmap.width
-
-        // Calculate the new height
-        //val newHeight = Math.round(originalBitmap.height * scaleWidth)
-        val newHeight = originalBitmap.height + increaseHeight
-
-        // Create a new bitmap with the increased width
-        workingBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, false)
-        imageView.setImageBitmap(workingBitmap)
-
+        workingBitmap?.let {
+            foregroundStickerBitmap?.let {
+                moveableForegroundView?.initBitmaps(workingBitmap!!, foregroundStickerBitmap!!,
+                    object: MoveableForegroundView.OnMovementDoneListener{
+                    override fun onMovementChanged(x: Int, y: Int) {
+                        stickerX = x;
+                        stickerY = y;
+                    }
+                })
+            }
+        }
     }
 
+    fun getBitmapFromDrawable(context: Context, drawableResId: Int): Bitmap? {
+        val drawable: Drawable? = ContextCompat.getDrawable(context, drawableResId)
+        if (drawable is BitmapDrawable) {
+            return drawable.bitmap
+        } else if (drawable != null) {
+            val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            return bitmap
+        }
+        return null
+    }
 
 }
+
