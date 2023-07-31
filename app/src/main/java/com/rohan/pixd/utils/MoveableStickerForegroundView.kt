@@ -8,7 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.rohan.pixd.ui.main.MainActivity
 
-class MoveableForegroundView : View {
+class MoveableStickerForegroundView : View {
     private var backgroundBitmap: Bitmap? = null
     private var foregroundBitmap: Bitmap? = null
     private var x = 100 // Initial X-coordinate
@@ -47,7 +47,6 @@ class MoveableForegroundView : View {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
         // Draw the background bitmap
         canvas.drawBitmap(backgroundBitmap!!, 0f, 0f, null)
 

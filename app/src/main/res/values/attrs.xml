@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MovableTextViewContainer">
+        <attr name="text" format="string" />
+        <!-- Add other attributes you want to support, such as text color, size, etc. -->
+    </declare-styleable>
+</resources>

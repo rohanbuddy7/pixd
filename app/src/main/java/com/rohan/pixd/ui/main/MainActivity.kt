@@ -10,7 +10,6 @@ import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
@@ -30,16 +29,18 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.rohan.pixd.R
-import com.rohan.pixd.ui.sticker.SticketBottomSheet
+import com.rohan.pixd.ui.sticker.StickerBottomSheet
+import com.rohan.pixd.ui.text.TextBottomSheet
 import com.rohan.pixd.utils.FilterHelper
 import com.rohan.pixd.utils.MeasureCropView
-import com.rohan.pixd.utils.MoveableForegroundView
+import com.rohan.pixd.utils.MoveableStickerForegroundView
 import com.rohan.pixd.utils.PermissionHelper
 import com.rohan.pixd.utils.StickerHelper
+import com.rohan.pixd.utils.xd
 
 
 class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListener,
-    SticketBottomSheet.BottomSheetListener {
+    StickerBottomSheet.BottomSheetListener, TextBottomSheet.BottomSheetListener {
 
     private val brightness: String = "brightness"
     private val crop: String = "crop"
@@ -72,11 +73,13 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     private var measureBoxViewx: MeasureCropView? = null
     private var zone: RelativeLayout? = null
     private var frame: ConstraintLayout? = null
-    private var stickerBs: SticketBottomSheet? = null
-    private var moveableForegroundView: MoveableForegroundView? = null
+    private var stickerBs: StickerBottomSheet? = null
+    private var textBs: TextBottomSheet? = null
+    private var moveableStickerForegroundView: MoveableStickerForegroundView? = null
     private var stickerX: Int = 0;
     private var stickerY: Int = 0;
     private var foregroundStickerBitmap: Bitmap? = null;
+    private var xdtext: xd? = null;
 
     companion object{
         var stickerWidth = 500;
@@ -102,8 +105,9 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         measureBoxViewx = findViewById(R.id.xxd)
         zone = findViewById(R.id.zone)
         frame = findViewById(R.id.frame)
-        moveableForegroundView = findViewById(R.id.moveableForegroundView)
+        moveableStickerForegroundView = findViewById(R.id.moveableForegroundView)
         frameProgress = findViewById(R.id.frameProgress)
+        xdtext = findViewById(R.id.xdtext)
 
         loadButton.setOnClickListener {
             if (PermissionHelper.checkPermissions(this)) {
@@ -369,18 +373,21 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
 
         showSticker.observe(this, Observer {
             if(it){
-                stickerBs = SticketBottomSheet();
+                stickerBs = StickerBottomSheet();
                 stickerBs?.show(supportFragmentManager, "")
             } else {
-                moveableForegroundView?.visibility = View.GONE
+                moveableStickerForegroundView?.visibility = View.GONE
             }
         })
 
         showText.observe(this, Observer {
             if(it){
-
+                textBs = TextBottomSheet();
+                textBs?.show(supportFragmentManager, "")
+                xdtext?.visibility = View.VISIBLE
             } else {
-
+                moveableStickerForegroundView?.visibility = View.GONE
+                xdtext?.visibility = View.GONE
             }
         })
     }
@@ -461,14 +468,14 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
 
     override fun onStickerDataReceived(stickerDrawable: Int) {
         stickerBs?.dismissAllowingStateLoss();
-        moveableForegroundView?.visibility = View.VISIBLE
+        moveableStickerForegroundView?.visibility = View.VISIBLE
         somethingChanged.postValue(true)
         foregroundStickerBitmap = getBitmapFromDrawable(this, stickerDrawable)
 
         workingBitmap?.let {
             foregroundStickerBitmap?.let {
-                moveableForegroundView?.initBitmaps(workingBitmap!!, foregroundStickerBitmap!!,
-                    object: MoveableForegroundView.OnMovementDoneListener{
+                moveableStickerForegroundView?.initBitmaps(workingBitmap!!, foregroundStickerBitmap!!,
+                    object: MoveableStickerForegroundView.OnMovementDoneListener{
                     override fun onMovementChanged(x: Int, y: Int) {
                         stickerX = x;
                         stickerY = y;
@@ -491,6 +498,12 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         }
         return null
     }
+
+    override fun onTextDataReceived(string: String) {
+        xdtext?.setTextViewText(string)
+        textBs?.dismissAllowingStateLoss()
+    }
+
 
 }
 

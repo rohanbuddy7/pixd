@@ -10,7 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rohan.pixd.R
 
 
-class SticketBottomSheet: BottomSheetDialogFragment(), StickerAdapter.StickerCallbackListener {
+class StickerBottomSheet: BottomSheetDialogFragment(), StickerAdapter.StickerCallbackListener {
 
     var rv_sticker: RecyclerView? = null;
     var stickerAdapter: StickerAdapter? = null;
