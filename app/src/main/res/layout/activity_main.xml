@@ -105,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone">-->
 
-                <com.rohan.pixd.utils.xd
+                <com.rohan.pixd.utils.MovableTextviewContainer
                     android:id="@+id/xdtext"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

@@ -36,7 +36,7 @@ import com.rohan.pixd.utils.MeasureCropView
 import com.rohan.pixd.utils.MoveableStickerForegroundView
 import com.rohan.pixd.utils.PermissionHelper
 import com.rohan.pixd.utils.StickerHelper
-import com.rohan.pixd.utils.xd
+import com.rohan.pixd.utils.MovableTextviewContainer
 
 
 class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListener,
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     private var stickerX: Int = 0;
     private var stickerY: Int = 0;
     private var foregroundStickerBitmap: Bitmap? = null;
-    private var xdtext: xd? = null;
+    private var xdtext: MovableTextviewContainer? = null;
 
     companion object{
         var stickerWidth = 500;
@@ -245,7 +245,14 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
                         },2000)
                     }
                 }
-
+            }
+            text -> {
+                workingBitmap?.let {
+                    workingBitmap = xdtext?.getBitmapWithText(workingBitmap!!)
+                    imageView.setImageBitmap(workingBitmap)
+                    somethingChanged.postValue(false)
+                    resetThings()
+                }
             }
         }
 
@@ -500,6 +507,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     }
 
     override fun onTextDataReceived(string: String) {
+        somethingChanged.postValue(true)
         xdtext?.setTextViewText(string)
         textBs?.dismissAllowingStateLoss()
     }

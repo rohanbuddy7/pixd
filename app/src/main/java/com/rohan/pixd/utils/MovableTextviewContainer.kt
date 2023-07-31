@@ -4,6 +4,7 @@ package com.rohan.pixd.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
@@ -11,7 +12,7 @@ import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 
-class xd @JvmOverloads constructor(
+class MovableTextviewContainer @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -79,10 +80,31 @@ class xd @JvmOverloads constructor(
         movableTextView.text = text
     }
 
-    fun getBitmapWithTextView(): Bitmap {
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    fun getBitmapWithText(bitmap: Bitmap): Bitmap {
+        // Create a bitmap with the size of the MovableTextViewContainer
+        //val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+        // Create a canvas with the bitmap
         val canvas = Canvas(bitmap)
+
+        // Draw the MovableTextViewContainer on the canvas
         draw(canvas)
+
+        // Draw the movableTextView's text on the canvas at its current position
+        val paint = Paint().apply {
+            color = Color.BLACK
+            //textSize = movableTextView.textSize
+            textAlign = Paint.Align.LEFT
+            //isAntiAlias = true
+        }
+        movableTextView.text = ""
+        canvas.drawText(
+            movableTextView.text.toString(),
+            movableTextView.x + movableTextView.paddingLeft,
+            movableTextView.y + movableTextView.paddingTop + paint.textSize,
+            paint
+        )
+
         return bitmap
     }
 }
