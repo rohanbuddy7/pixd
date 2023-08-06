@@ -26,6 +26,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.rohan.pixd.R
@@ -506,10 +507,17 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         return null
     }
 
-    override fun onTextDataReceived(string: String) {
+    override fun onTextDataReceived(string: String, font: Int?, color: Int?) {
         somethingChanged.postValue(true)
         xdtext?.setTextViewText(string)
+        font?.let {
+            xdtext?.setFontFamily(this, font)
+        }
+        color?.let {
+            xdtext?.setColor(this, color)
+        }
         textBs?.dismissAllowingStateLoss()
+
     }
 
 

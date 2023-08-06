@@ -11,6 +11,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.res.ResourcesCompat
 
 class MovableTextviewContainer @JvmOverloads constructor(
     context: Context,
@@ -78,6 +80,14 @@ class MovableTextviewContainer @JvmOverloads constructor(
 
     fun setTextViewText(text: String) {
         movableTextView.text = text
+    }
+
+    fun setFontFamily(context: Context, fonts: Int) {
+        movableTextView.typeface = ResourcesCompat.getFont(context, fonts)
+    }
+
+    fun setColor(context: Context, color: Int) {
+        movableTextView.setTextColor(context.resources.getColor(color));
     }
 
     fun getBitmapWithText(bitmap: Bitmap): Bitmap {

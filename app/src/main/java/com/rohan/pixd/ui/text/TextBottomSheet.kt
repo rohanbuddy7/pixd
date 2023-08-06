@@ -7,15 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rohan.pixd.R
 
 
-class TextBottomSheet: BottomSheetDialogFragment() {
+class TextBottomSheet: BottomSheetDialogFragment(),
+    TextFontsAdapter.FontsCallbackListener,
+    TextColorAdapter.ColorCallbackListener {
 
+    var rvColor: RecyclerView? = null;
+    var rvFonts: RecyclerView? = null;
     var edittext: EditText? = null;
     var buttonAdd: Button? = null;
+    var fonts: Int? = null;
+    var color: Int? = null;
     private var mListener: BottomSheetListener? = null
 
     override fun onCreateView(
@@ -31,9 +38,18 @@ class TextBottomSheet: BottomSheetDialogFragment() {
 
         edittext = view.findViewById(R.id.edittext)
         buttonAdd = view.findViewById(R.id.buttonAdd)
+        rvColor = view.findViewById(R.id.rvColor)
+        rvFonts = view.findViewById(R.id.rvFonts)
+
+        val colorAdapter = TextColorAdapter(requireContext(), this)
+        rvColor?.adapter = colorAdapter;
+
+        val fontAdapter = TextFontsAdapter(requireContext(), this)
+        rvFonts?.adapter = fontAdapter;
+
 
         buttonAdd?.setOnClickListener {
-            mListener?.onTextDataReceived(edittext?.text.toString())
+            mListener?.onTextDataReceived(edittext?.text.toString(), fonts, color)
         }
 
     }
@@ -49,6 +65,16 @@ class TextBottomSheet: BottomSheetDialogFragment() {
 
 
     interface BottomSheetListener {
-        fun onTextDataReceived(string: String)
+        fun onTextDataReceived(string: String, font: Int?, color: Int?)
+    }
+
+    override fun fontsCallback(fontsDrawable: Int) {
+        fonts = fontsDrawable;
+        edittext?.typeface = ResourcesCompat.getFont(requireContext(), fontsDrawable)
+    }
+
+    override fun colorCallback(colorDrawable: Int) {
+        color = colorDrawable;
+        edittext?.setTextColor(requireContext().resources.getColor(colorDrawable))
     }
 }

@@ -27,4 +27,22 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvColor"
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="horizontal"
+        tools:listitem="@layout/card_colors"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFonts"
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        tools:listitem="@layout/card_fonts"/>
+
 </LinearLayout>
