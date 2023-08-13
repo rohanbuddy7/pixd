@@ -26,7 +26,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.rohan.pixd.R
@@ -68,11 +67,13 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     private lateinit var featureSticker: ImageView
     private lateinit var featureText: ImageView
     private lateinit var seekBarBrightness: SeekBar
+    private lateinit var seekBarText: SeekBar
     private lateinit var frameControllerBrightness: FrameLayout
+    private lateinit var frameControllerText: FrameLayout
     private lateinit var frameProgress: FrameLayout
     private var seekBarValue: Int? = 0
     private var measureBoxViewx: MeasureCropView? = null
-    private var zone: RelativeLayout? = null
+    private var editzone: RelativeLayout? = null
     private var frame: ConstraintLayout? = null
     private var stickerBs: StickerBottomSheet? = null
     private var textBs: TextBottomSheet? = null
@@ -80,7 +81,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     private var stickerX: Int = 0;
     private var stickerY: Int = 0;
     private var foregroundStickerBitmap: Bitmap? = null;
-    private var xdtext: MovableTextviewContainer? = null;
+    private var movableTextviewContainer: MovableTextviewContainer? = null;
 
     companion object{
         var stickerWidth = 500;
@@ -102,13 +103,15 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         featureSticker = findViewById(R.id.imageSticker)
         featureText = findViewById(R.id.imageText)
         seekBarBrightness = findViewById(R.id.seekBarBrightness)
+        seekBarText = findViewById(R.id.seekBarText)
         frameControllerBrightness = findViewById(R.id.frameControllerBrightness)
+        frameControllerText = findViewById(R.id.frameControllerText)
         measureBoxViewx = findViewById(R.id.xxd)
-        zone = findViewById(R.id.zone)
+        editzone = findViewById(R.id.editzone)
         frame = findViewById(R.id.frame)
         moveableStickerForegroundView = findViewById(R.id.moveableForegroundView)
         frameProgress = findViewById(R.id.frameProgress)
-        xdtext = findViewById(R.id.xdtext)
+        movableTextviewContainer = findViewById(R.id.movableTextviewContainer)
 
         loadButton.setOnClickListener {
             if (PermissionHelper.checkPermissions(this)) {
@@ -134,6 +137,21 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
                     val adjustedBitmap = adjustBrightness(bitmap, seekBarValue!!.toFloat());
                     imageView.setImageBitmap(adjustedBitmap)
                 }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+        })
+
+        seekBarText.progress = MovableTextviewContainer.Companion.defaultTextSize
+        seekBarText.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                movableTextviewContainer?.setTextSize(this@MainActivity, progress.toFloat())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -249,7 +267,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
             }
             text -> {
                 workingBitmap?.let {
-                    workingBitmap = xdtext?.getBitmapWithText(workingBitmap!!)
+                    workingBitmap = movableTextviewContainer?.getBitmapWithText(workingBitmap!!)
                     imageView.setImageBitmap(workingBitmap)
                     somethingChanged.postValue(false)
                     resetThings()
@@ -392,10 +410,12 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
             if(it){
                 textBs = TextBottomSheet();
                 textBs?.show(supportFragmentManager, "")
-                xdtext?.visibility = View.VISIBLE
+                movableTextviewContainer?.visibility = View.VISIBLE
+                frameControllerText.visibility = View.VISIBLE;
             } else {
                 moveableStickerForegroundView?.visibility = View.GONE
-                xdtext?.visibility = View.GONE
+                movableTextviewContainer?.visibility = View.GONE
+                frameControllerText.visibility = View.GONE;
             }
         })
     }
@@ -466,9 +486,9 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         imageView.setImageBitmap(workingBitmap)
 
         if(newHeight>(availableHeight?:0)){
-            zone?.layoutParams?.height = availableHeight
+            editzone?.layoutParams?.height = availableHeight
         } else {
-            zone?.layoutParams?.height = workingBitmap?.height
+            editzone?.layoutParams?.height = workingBitmap?.height
         }
 
         return workingBitmap!!
@@ -509,12 +529,12 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
 
     override fun onTextDataReceived(string: String, font: Int?, color: Int?) {
         somethingChanged.postValue(true)
-        xdtext?.setTextViewText(string)
+        movableTextviewContainer?.setTextViewText(string)
         font?.let {
-            xdtext?.setFontFamily(this, font)
+            movableTextviewContainer?.setFontFamily(this, font)
         }
         color?.let {
-            xdtext?.setColor(this, color)
+            movableTextviewContainer?.setColor(this, color)
         }
         textBs?.dismissAllowingStateLoss()
 
