@@ -8,15 +8,12 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
-import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.res.ResourcesCompat
+
 
 class MovableTextviewContainer @JvmOverloads constructor(
     context: Context,
@@ -30,6 +27,13 @@ class MovableTextviewContainer @JvmOverloads constructor(
     private var bitmap: Bitmap? = null
     private var initialDistance = 0f
     private var movetext = false
+    private var bgAdded = false
+    private var string = ""
+    private var font: Int? = null
+    private var color: Int? = null
+    private var bgColor: Int? = null
+    private var textClickListener: TextClickListener? = null
+
     companion object {
         var defaultTextSize = 30
     }
@@ -38,7 +42,10 @@ class MovableTextviewContainer @JvmOverloads constructor(
         movableTextView = AppCompatTextView(context)
         movableTextView.textSize = defaultTextSize.toFloat()
         movableTextView.setTextColor(resources.getColor(android.R.color.black))
-        movableTextView.setBackgroundColor(resources.getColor(android.R.color.black))
+        //movableTextView.setBackgroundColor(resources.getColor(android.R.color.black))
+        movableTextView.setOnClickListener {
+            textClickListener?.onTextClicked();
+        }
 
         val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         addView(movableTextView, layoutParams)
@@ -49,13 +56,6 @@ class MovableTextviewContainer @JvmOverloads constructor(
         val y = event.y
 
         when (event.action) {
-            MotionEvent.ACTION_POINTER_DOWN -> {
-                if (event.pointerCount == 2) {
-                    val dx = event.getX(0) - event.getX(1)
-                    val dy = event.getY(0) - event.getY(1)
-                    initialDistance = Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
-                }
-            }
             MotionEvent.ACTION_DOWN -> {
                 //if (isTouchInsideTextView(x, y)) {
                     lastTouchX = x - movableTextView.x
@@ -63,26 +63,24 @@ class MovableTextviewContainer @JvmOverloads constructor(
 
             }
             MotionEvent.ACTION_MOVE -> {
-                //if(movetext) {
-                    val newLeft = x - lastTouchX
-                    val newTop = y - lastTouchY
-                    val newRight = newLeft + movableTextView.width
-                    val newBottom = newTop + movableTextView.height
+                val newLeft = x - lastTouchX
+                val newTop = y - lastTouchY
+                val newRight = newLeft + movableTextView.width
+                val newBottom = newTop + movableTextView.height
 
-                    // Get the parent view's boundaries
-                    val parentRect = Rect(paddingLeft, paddingTop, width - paddingRight, height - paddingBottom)
+                // Get the parent view's boundaries
+                val parentRect = Rect(paddingLeft, paddingTop, width - paddingRight, height - paddingBottom)
 
-                    // Limit the movement within the parent's boundaries
-                    /*if (parentRect.contains(
-                            newLeft.toInt(),
-                            newTop.toInt(),
-                            newRight.toInt(),
-                            newBottom.toInt()
-                        )
-                    ) {*/
-                        movableTextView.x = newLeft
-                        movableTextView.y = newTop
-                    //}
+                // Limit the movement within the parent's boundaries
+                /*if (parentRect.contains(
+                        newLeft.toInt(),
+                        newTop.toInt(),
+                        newRight.toInt(),
+                        newBottom.toInt()
+                    )
+                ) {*/
+                    movableTextView.x = newLeft
+                    movableTextView.y = newTop
                 //}
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -104,19 +102,48 @@ class MovableTextviewContainer @JvmOverloads constructor(
     }
 
     fun setTextViewText(text: String) {
+        string = text;
         movableTextView.text = text
     }
 
+    fun getTextViewText(): String?{
+        return string;
+    }
+
     fun setFontFamily(context: Context, fonts: Int) {
+        font = fonts;
         movableTextView.typeface = ResourcesCompat.getFont(context, fonts)
     }
 
+    fun getFontFamily(): Int?{
+        return font;
+    }
+
     fun setColor(context: Context, color: Int) {
+        this.color = color;
         movableTextView.setTextColor(context.resources.getColor(color));
+    }
+
+    fun getColor(): Int?{
+        return color;
     }
 
     fun setTextSize(context: Context, size: Float) {
         movableTextView.textSize = size
+    }
+
+    fun addBackgroundColor(color: Int?) {
+        this.bgColor = color;
+        color?.let {
+            movableTextView.setBackgroundColor(resources.getColor(color));
+            movableTextView.alpha = 1f;
+        }?: kotlin.run {
+            movableTextView.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    fun getBackgroundColor(): Int?{
+        return bgColor;
     }
 
     fun getBitmapWithText(bitmap: Bitmap): Bitmap {
@@ -145,6 +172,14 @@ class MovableTextviewContainer @JvmOverloads constructor(
         )
 
         return bitmap
+    }
+
+    interface TextClickListener{
+        fun onTextClicked();
+    }
+
+    fun setTextClickListner(textClickListener: TextClickListener){
+        this.textClickListener = textClickListener;
     }
 
 }

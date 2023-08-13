@@ -88,7 +88,7 @@
                 android:src="@drawable/ic_placeholder_view_vector"/>
 
             <com.rohan.pixd.utils.MeasureCropView
-                android:id="@+id/xxd"
+                android:id="@+id/measureCropView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
@@ -140,14 +140,16 @@
         android:id="@+id/frameControllerText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@id/bottomLayout"
-        android:visibility="gone"
+        android:visibility="visible"
         android:padding="20dp">
 
         <SeekBar
             android:id="@+id/seekBarText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:theme="@style/SeekBarStyle"
             android:max="100"
             android:min="5"

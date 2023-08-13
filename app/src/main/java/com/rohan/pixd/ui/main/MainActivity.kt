@@ -40,7 +40,8 @@ import com.rohan.pixd.utils.MovableTextviewContainer
 
 
 class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListener,
-    StickerBottomSheet.BottomSheetListener, TextBottomSheet.BottomSheetListener {
+    StickerBottomSheet.BottomSheetListener, TextBottomSheet.BottomSheetListener,
+    MovableTextviewContainer.TextClickListener {
 
     private val brightness: String = "brightness"
     private val crop: String = "crop"
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         seekBarText = findViewById(R.id.seekBarText)
         frameControllerBrightness = findViewById(R.id.frameControllerBrightness)
         frameControllerText = findViewById(R.id.frameControllerText)
-        measureBoxViewx = findViewById(R.id.xxd)
+        measureBoxViewx = findViewById(R.id.measureCropView)
         editzone = findViewById(R.id.editzone)
         frame = findViewById(R.id.frame)
         moveableStickerForegroundView = findViewById(R.id.moveableForegroundView)
@@ -184,6 +185,8 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         }
 
         measureBoxViewx?.setMeasureChangeListener(this);
+
+        movableTextviewContainer?.setTextClickListner(this);
 
     }
 
@@ -408,7 +411,12 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
 
         showText.observe(this, Observer {
             if(it){
-                textBs = TextBottomSheet();
+                textBs = TextBottomSheet(
+                    string = "",
+                    fonts = null,
+                    color = null,
+                    bgcolor = null
+                );
                 textBs?.show(supportFragmentManager, "")
                 movableTextviewContainer?.visibility = View.VISIBLE
                 frameControllerText.visibility = View.VISIBLE;
@@ -527,7 +535,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         return null
     }
 
-    override fun onTextDataReceived(string: String, font: Int?, color: Int?) {
+    override fun onTextDataReceived(string: String, font: Int?, color: Int?, bgColor: Int?) {
         somethingChanged.postValue(true)
         movableTextviewContainer?.setTextViewText(string)
         font?.let {
@@ -536,8 +544,19 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         color?.let {
             movableTextviewContainer?.setColor(this, color)
         }
+        movableTextviewContainer?.addBackgroundColor(bgColor)
         textBs?.dismissAllowingStateLoss()
 
+    }
+
+    override fun onTextClicked() {
+        textBs = TextBottomSheet(
+            string = movableTextviewContainer?.getTextViewText(),
+            fonts = movableTextviewContainer?.getFontFamily(),
+            color = movableTextviewContainer?.getColor(),
+            bgcolor = movableTextviewContainer?.getBackgroundColor()
+        );
+        textBs?.show(supportFragmentManager, "")
     }
 
 

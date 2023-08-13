@@ -13,4 +13,9 @@
         android:layout_height="30dp"
         android:background="@color/red"/>
 
+    <ImageView
+        android:id="@+id/imageColors"
+        android:layout_width="30dp"
+        android:layout_height="30dp"/>
+
 </androidx.cardview.widget.CardView>

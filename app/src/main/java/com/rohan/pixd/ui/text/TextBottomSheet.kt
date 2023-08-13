@@ -1,7 +1,9 @@
 package com.rohan.pixd.ui.text
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,16 +15,20 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rohan.pixd.R
 
 
-class TextBottomSheet: BottomSheetDialogFragment(),
+class TextBottomSheet(
+    var string: String?, var fonts: Int?, var color: Int?, var bgcolor: Int?
+): BottomSheetDialogFragment(),
     TextFontsAdapter.FontsCallbackListener,
-    TextColorAdapter.ColorCallbackListener {
+    TextColorAdapter.ColorCallbackListener, TextBackgroundAdapter.BackgroundColorCallbackListener {
 
     var rvColor: RecyclerView? = null;
+    var rvBgColor: RecyclerView? = null;
     var rvFonts: RecyclerView? = null;
     var edittext: EditText? = null;
     var buttonAdd: Button? = null;
-    var fonts: Int? = null;
+    /*var fonts: Int? = null;
     var color: Int? = null;
+    var bgcolor: Int? = null;*/
     private var mListener: BottomSheetListener? = null
 
     override fun onCreateView(
@@ -36,10 +42,15 @@ class TextBottomSheet: BottomSheetDialogFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         edittext = view.findViewById(R.id.edittext)
         buttonAdd = view.findViewById(R.id.buttonAdd)
         rvColor = view.findViewById(R.id.rvColor)
+        rvBgColor = view.findViewById(R.id.rvBgColor)
         rvFonts = view.findViewById(R.id.rvFonts)
+
+        val bgAdapter = TextBackgroundAdapter(requireContext(), this)
+        rvBgColor?.adapter = bgAdapter;
 
         val colorAdapter = TextColorAdapter(requireContext(), this)
         rvColor?.adapter = colorAdapter;
@@ -47,9 +58,19 @@ class TextBottomSheet: BottomSheetDialogFragment(),
         val fontAdapter = TextFontsAdapter(requireContext(), this)
         rvFonts?.adapter = fontAdapter;
 
-
         buttonAdd?.setOnClickListener {
-            mListener?.onTextDataReceived(edittext?.text.toString(), fonts, color)
+            mListener?.onTextDataReceived(edittext?.text.toString(), fonts, color, bgcolor)
+        }
+
+        edittext?.setText(string);
+        fonts?.let {
+            edittext?.typeface = ResourcesCompat.getFont(requireContext(), fonts!!)
+        }
+        color?.let {
+            edittext?.setTextColor(requireContext().resources.getColor(color!!))
+        }
+        bgcolor?.let {
+            edittext?.setBackgroundColor(resources.getColor(it))
         }
 
     }
@@ -65,7 +86,7 @@ class TextBottomSheet: BottomSheetDialogFragment(),
 
 
     interface BottomSheetListener {
-        fun onTextDataReceived(string: String, font: Int?, color: Int?)
+        fun onTextDataReceived(string: String, font: Int?, color: Int?, bgColor: Int?)
     }
 
     override fun fontsCallback(fontsDrawable: Int) {
@@ -77,4 +98,31 @@ class TextBottomSheet: BottomSheetDialogFragment(),
         color = colorDrawable;
         edittext?.setTextColor(requireContext().resources.getColor(colorDrawable))
     }
+
+    override fun bgColorCallback(color: Int?) {
+        bgcolor = color;
+        bgcolor?.let {
+            edittext?.setBackgroundColor(resources.getColor(it))
+        }?: kotlin.run {
+            edittext?.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    /*fun provideData(string: String?, font: Int?, color: Int?, bgColor: Int?){
+        this.fonts = font;
+        this.color = color;
+        this.bgcolor = bgColor;
+
+        edittext?.setText(string);
+        font?.let {
+            edittext?.typeface = ResourcesCompat.getFont(requireContext(), font)
+        }
+        color?.let {
+            edittext?.setTextColor(requireContext().resources.getColor(color))
+        }
+        bgcolor?.let {
+            edittext?.setBackgroundColor(resources.getColor(it))
+        }
+    }*/
+
 }
