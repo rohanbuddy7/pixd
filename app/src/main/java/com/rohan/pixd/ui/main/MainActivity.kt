@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     private lateinit var featureFilter: ImageView
     private lateinit var loadButton: Button
     private lateinit var applyButton: Button
+    private lateinit var cancelButton: Button
     private lateinit var filterButton: Button
     private lateinit var featureBrightness: ImageView
     private lateinit var featureCrop: ImageView
@@ -99,6 +100,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         imageView = findViewById(R.id.imageView)
         loadButton = findViewById(R.id.loadButton)
         applyButton = findViewById(R.id.applyButton)
+        cancelButton = findViewById(R.id.cancelButton)
         //filterButton = findViewById(R.id.filterButton)
         featureFilter = findViewById(R.id.imageFilter)
         featureBrightness = findViewById(R.id.imageBrightness)
@@ -132,6 +134,11 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
 
         applyButton.setOnClickListener {
             applyChanges()
+        }
+
+        cancelButton.setOnClickListener {
+            somethingChanged.postValue(false)
+            resetThings()
         }
 
         seekBarBrightness.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
@@ -369,9 +376,11 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         somethingChanged.observe(this, Observer {
             if(it){
                 applyButton.visibility = View.VISIBLE
+                cancelButton.visibility = View.VISIBLE
                 loadButton.visibility = View.GONE
             } else {
                 applyButton.visibility = View.GONE
+                cancelButton.visibility = View.GONE
                 loadButton.visibility = View.VISIBLE
             }
         })
@@ -488,6 +497,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
 
     override fun onMeasureChanged() {
         applyButton.visibility = View.VISIBLE
+        cancelButton.visibility = View.VISIBLE
     }
 
     fun cropBitmap(originalBitmap: Bitmap?, left: Int, top: Int, width: Int, height: Int): Bitmap? {
