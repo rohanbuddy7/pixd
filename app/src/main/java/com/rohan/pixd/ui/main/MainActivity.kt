@@ -411,13 +411,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
 
         showText.observe(this, Observer {
             if(it){
-                textBs = TextBottomSheet(
-                    string = "",
-                    fonts = null,
-                    color = null,
-                    bgcolor = null
-                );
-                textBs?.show(supportFragmentManager, "")
+                openTextBottomsheet();
                 movableTextviewContainer?.visibility = View.VISIBLE
                 frameControllerText.visibility = View.VISIBLE;
             } else {
@@ -426,6 +420,16 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
                 frameControllerText.visibility = View.GONE;
             }
         })
+    }
+
+    private fun openTextBottomsheet() {
+        textBs = TextBottomSheet(
+            string = movableTextviewContainer?.getTextViewText(),
+            fonts = movableTextviewContainer?.getFontFamily(),
+            color = movableTextviewContainer?.getColor(),
+            bgcolor = movableTextviewContainer?.getBackgroundColor()
+        );
+        textBs?.show(supportFragmentManager, "")
     }
 
     private fun changingNavigation(value: String){
@@ -550,13 +554,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     }
 
     override fun onTextClicked() {
-        textBs = TextBottomSheet(
-            string = movableTextviewContainer?.getTextViewText(),
-            fonts = movableTextviewContainer?.getFontFamily(),
-            color = movableTextviewContainer?.getColor(),
-            bgcolor = movableTextviewContainer?.getBackgroundColor()
-        );
-        textBs?.show(supportFragmentManager, "")
+        openTextBottomsheet()
     }
 
 

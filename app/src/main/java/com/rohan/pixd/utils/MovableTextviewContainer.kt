@@ -43,9 +43,9 @@ class MovableTextviewContainer @JvmOverloads constructor(
         movableTextView.textSize = defaultTextSize.toFloat()
         movableTextView.setTextColor(resources.getColor(android.R.color.black))
         //movableTextView.setBackgroundColor(resources.getColor(android.R.color.black))
-        movableTextView.setOnClickListener {
+        /*movableTextView.setOnClickListener {
             textClickListener?.onTextClicked();
-        }
+        }*/
 
         val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         addView(movableTextView, layoutParams)
