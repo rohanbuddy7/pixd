@@ -11,9 +11,10 @@ import com.rohan.pixd.ui.main.MainActivity
 class MoveableStickerForegroundView : View {
     private var backgroundBitmap: Bitmap? = null
     private var foregroundBitmap: Bitmap? = null
+    private var originalForegroundBitmap: Bitmap? = null
     private var x = 100 // Initial X-coordinate
     private var y = 200 // Initial Y-coordinate
-    private var isMoving = false // Flag to indicate if the foreground bitmap is being moved
+    private var isMoving = true // Flag to indicate if the foreground bitmap is being moved
     private var onMovementDoneListener: OnMovementDoneListener? = null // Flag to indicate if the foreground bitmap is being moved
 
     constructor(context: Context?) : super(context) {
@@ -42,6 +43,7 @@ class MoveableStickerForegroundView : View {
         this.backgroundBitmap = backgroundBitmap
         val scaledOverlayBitmap = Bitmap.createScaledBitmap(foregroundBitamp, MainActivity.stickerWidth, MainActivity.stickerHeight, true)
         this.foregroundBitmap = scaledOverlayBitmap
+        this.originalForegroundBitmap = scaledOverlayBitmap
         this.onMovementDoneListener = onMovementDoneListener
     }
 
@@ -57,12 +59,13 @@ class MoveableStickerForegroundView : View {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val action = event.action
         when (action) {
-            MotionEvent.ACTION_DOWN ->                 // Check if the touch event occurred within the boundaries of the foreground bitmap
-                if (event.x >= x && event.x < x + foregroundBitmap!!.width && event.y >= y && event.y < y + foregroundBitmap!!.height) {
+            MotionEvent.ACTION_DOWN -> {}                // Check if the touch event occurred within the boundaries of the foreground bitmap
+                /*if (event.x >= x && event.x < x + foregroundBitmap!!.width && event.y >= y && event.y < y + foregroundBitmap!!.height) {
                     isMoving = true
-                }
+                }*/
 
-            MotionEvent.ACTION_MOVE -> if (isMoving) {
+            MotionEvent.ACTION_MOVE ->{ //if (isMoving) {
+
                 // Update the x and y coordinates based on the touch movement
                 x = event.x.toInt() - foregroundBitmap!!.width / 2
                 y = event.y.toInt() - foregroundBitmap!!.height / 2
@@ -82,11 +85,21 @@ class MoveableStickerForegroundView : View {
             }
 
             MotionEvent.ACTION_UP -> {               // Stop moving the foreground bitmap when the touch is released
-                isMoving = false
+                //isMoving = false
                 onMovementDoneListener?.onMovementChanged(x, y);
             }
         }
         return true
+    }
+
+    fun getForegroundBitmap(): Bitmap?{
+        return foregroundBitmap;
+    }
+
+    fun resizeForegroundBitmap(newWidth: Int, newHeight: Int) {
+        val scaledOverlayBitmap = Bitmap.createScaledBitmap(originalForegroundBitmap!!, newWidth, newHeight, true)
+        foregroundBitmap = scaledOverlayBitmap
+        invalidate() // Redraw the view with the resized bitmap
     }
 
     interface OnMovementDoneListener{

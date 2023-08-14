@@ -69,8 +69,10 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     private lateinit var featureText: ImageView
     private lateinit var seekBarBrightness: SeekBar
     private lateinit var seekBarText: SeekBar
+    private lateinit var seekBarSticker: SeekBar
     private lateinit var frameControllerBrightness: FrameLayout
     private lateinit var frameControllerText: FrameLayout
+    private lateinit var frameControllerSticker: FrameLayout
     private lateinit var frameProgress: FrameLayout
     private var seekBarValue: Int? = 0
     private var measureBoxViewx: MeasureCropView? = null
@@ -105,8 +107,10 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         featureText = findViewById(R.id.imageText)
         seekBarBrightness = findViewById(R.id.seekBarBrightness)
         seekBarText = findViewById(R.id.seekBarText)
+        seekBarSticker = findViewById(R.id.seekBarSticker)
         frameControllerBrightness = findViewById(R.id.frameControllerBrightness)
         frameControllerText = findViewById(R.id.frameControllerText)
+        frameControllerSticker = findViewById(R.id.frameControllerSticker)
         measureBoxViewx = findViewById(R.id.measureCropView)
         editzone = findViewById(R.id.editzone)
         frame = findViewById(R.id.frame)
@@ -153,6 +157,20 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         seekBarText.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 movableTextviewContainer?.setTextSize(this@MainActivity, progress.toFloat())
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+        })
+
+        seekBarSticker.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                moveableStickerForegroundView?.resizeForegroundBitmap(progress, progress);
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -404,8 +422,10 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
             if(it){
                 stickerBs = StickerBottomSheet();
                 stickerBs?.show(supportFragmentManager, "")
+                frameControllerSticker.visibility = View.VISIBLE;
             } else {
                 moveableStickerForegroundView?.visibility = View.GONE
+                frameControllerSticker.visibility = View.GONE;
             }
         })
 

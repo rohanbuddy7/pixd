@@ -157,6 +157,27 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/frameControllerSticker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/bottomLayout"
+        android:visibility="visible"
+        android:padding="20dp">
+
+        <SeekBar
+            android:id="@+id/seekBarSticker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:theme="@style/SeekBarStyle"
+            android:max="1000"
+            android:min="100"
+            android:progress="500" />
+
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
