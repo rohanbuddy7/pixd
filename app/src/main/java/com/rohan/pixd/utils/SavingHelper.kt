@@ -10,7 +10,7 @@ import java.io.FileOutputStream
 
 class SavingHelper {
 
-    private fun saveImageToGallery(context: Context, bitmap: Bitmap) {
+    fun saveImageToGallery(context: Context, bitmap: Bitmap) {
         val filename = "${System.currentTimeMillis()}.jpg"
         val filePath = "${context.getExternalFilesDir(null)}/$filename"
         val file = File(filePath)

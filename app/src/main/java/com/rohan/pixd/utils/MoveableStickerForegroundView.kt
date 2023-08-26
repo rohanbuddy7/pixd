@@ -96,13 +96,15 @@ class MoveableStickerForegroundView : View {
         return foregroundBitmap;
     }
 
-    fun resizeForegroundBitmap(newWidth: Int, newHeight: Int) {
+    fun resizeForegroundBitmap(newWidth: Int, newHeight: Int){
         val scaledOverlayBitmap = Bitmap.createScaledBitmap(originalForegroundBitmap!!, newWidth, newHeight, true)
         foregroundBitmap = scaledOverlayBitmap
         invalidate() // Redraw the view with the resized bitmap
+        onMovementDoneListener?.onForegroundBitmapChanged(scaledOverlayBitmap)
     }
 
     interface OnMovementDoneListener{
         fun onMovementChanged(x: Int, y: Int)
+        fun onForegroundBitmapChanged(foreground: Bitmap)
     }
 }

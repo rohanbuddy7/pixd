@@ -18,7 +18,7 @@ class StickerHelper {
         canvas.drawBitmap(backgroundBitmap, 0f, 0f, null)
 
         // Resize the overlayBitmap to the desired width and height
-        val scaledOverlayBitmap = Bitmap.createScaledBitmap(overlayBitmap, MainActivity.stickerWidth, MainActivity.stickerHeight, true)
+        val scaledOverlayBitmap = Bitmap.createScaledBitmap(overlayBitmap, overlayBitmap.width, overlayBitmap.height, true)
 
         // Draw the overlay bitmap on top of the background
         canvas.drawBitmap(scaledOverlayBitmap!!, overlayX.toFloat(), overlayY.toFloat(), null)

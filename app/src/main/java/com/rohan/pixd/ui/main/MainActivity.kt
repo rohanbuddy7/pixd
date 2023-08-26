@@ -28,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.google.android.material.button.MaterialButton
 import com.rohan.pixd.R
 import com.rohan.pixd.ui.sticker.StickerBottomSheet
 import com.rohan.pixd.ui.text.TextBottomSheet
@@ -37,6 +38,7 @@ import com.rohan.pixd.utils.MoveableStickerForegroundView
 import com.rohan.pixd.utils.PermissionHelper
 import com.rohan.pixd.utils.StickerHelper
 import com.rohan.pixd.utils.MovableTextviewContainer
+import com.rohan.pixd.utils.SavingHelper
 
 
 class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListener,
@@ -58,6 +60,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     private var filterNumber: Int = 0;
     private var realBitmap: Bitmap? = null
     private var workingBitmap: Bitmap? = null
+    private lateinit var saveButton: MaterialButton
     private lateinit var imageView: ImageView
     private lateinit var featureFilter: ImageView
     private lateinit var loadButton: Button
@@ -98,6 +101,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         listener()
 
         imageView = findViewById(R.id.imageView)
+        saveButton = findViewById(R.id.saveButton)
         loadButton = findViewById(R.id.loadButton)
         applyButton = findViewById(R.id.applyButton)
         cancelButton = findViewById(R.id.cancelButton)
@@ -128,6 +132,16 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
             }
         }
 
+        imageView.setOnClickListener {
+            if(realBitmap == null){
+                if (PermissionHelper.checkPermissions(this)) {
+                    openGallery()
+                } else {
+                    PermissionHelper.requestStoragePermission(this)
+                }
+            }
+        }
+
         featureFilter.setOnClickListener {
             applyChanges()
         }
@@ -139,6 +153,12 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         cancelButton.setOnClickListener {
             somethingChanged.postValue(false)
             resetThings()
+        }
+
+        saveButton.setOnClickListener {
+            workingBitmap?.let {
+                SavingHelper().saveImageToGallery(this, workingBitmap!!)
+            }
         }
 
         seekBarBrightness.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
@@ -431,7 +451,6 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
             if(it){
                 stickerBs = StickerBottomSheet();
                 stickerBs?.show(supportFragmentManager, "")
-                frameControllerSticker.visibility = View.VISIBLE;
             } else {
                 moveableStickerForegroundView?.visibility = View.GONE
                 frameControllerSticker.visibility = View.GONE;
@@ -442,7 +461,6 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
             if(it){
                 openTextBottomsheet();
                 movableTextviewContainer?.visibility = View.VISIBLE
-                frameControllerText.visibility = View.VISIBLE;
             } else {
                 moveableStickerForegroundView?.visibility = View.GONE
                 movableTextviewContainer?.visibility = View.GONE
@@ -537,6 +555,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     }
 
     override fun onStickerDataReceived(stickerDrawable: Int) {
+        frameControllerSticker.visibility = View.VISIBLE;
         stickerBs?.dismissAllowingStateLoss();
         moveableStickerForegroundView?.visibility = View.VISIBLE
         somethingChanged.postValue(true)
@@ -546,11 +565,15 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
             foregroundStickerBitmap?.let {
                 moveableStickerForegroundView?.initBitmaps(workingBitmap!!, foregroundStickerBitmap!!,
                     object: MoveableStickerForegroundView.OnMovementDoneListener{
-                    override fun onMovementChanged(x: Int, y: Int) {
-                        stickerX = x;
-                        stickerY = y;
-                    }
-                })
+                        override fun onMovementChanged(x: Int, y: Int) {
+                            stickerX = x;
+                            stickerY = y;
+                        }
+
+                        override fun onForegroundBitmapChanged(foreground: Bitmap) {
+                            foregroundStickerBitmap = foreground;
+                        }
+                    })
             }
         }
     }
@@ -570,6 +593,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
     }
 
     override fun onTextDataReceived(string: String, font: Int?, color: Int?, bgColor: Int?) {
+        frameControllerText.visibility = View.VISIBLE;
         somethingChanged.postValue(true)
         movableTextviewContainer?.setTextViewText(string)
         font?.let {

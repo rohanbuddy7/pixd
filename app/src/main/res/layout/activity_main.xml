@@ -18,12 +18,12 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/backButton"
+            android:id="@+id/saveButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="10dp"
             app:backgroundTint="@color/black"
-            android:background="@drawable/ic_back"
+            android:background="@drawable/ic_save"
             android:backgroundTint="@color/black"
             android:layout_marginTop="16dp"/>
 
