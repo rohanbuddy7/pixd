@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rohan.pixd.R
@@ -56,6 +57,8 @@ class TextBottomSheet(
         rvColor?.adapter = colorAdapter;
 
         val fontAdapter = TextFontsAdapter(requireContext(), this)
+        val manager = GridLayoutManager(requireContext(), 2)
+        rvFonts?.layoutManager = manager;
         rvFonts?.adapter = fontAdapter;
 
         buttonAdd?.setOnClickListener {

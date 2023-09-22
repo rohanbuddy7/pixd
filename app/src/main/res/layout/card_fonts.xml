@@ -23,7 +23,7 @@
             android:id="@+id/textFonts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
+            android:text="--"
             android:maxLines="1"
             android:textSize="18dp"
             android:textColor="@color/black"/>

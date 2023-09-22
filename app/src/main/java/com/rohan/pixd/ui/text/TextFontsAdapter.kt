@@ -16,11 +16,11 @@ class TextFontsAdapter(
     var fontsCallbackListener: FontsCallbackListener
     ): RecyclerView.Adapter<TextFontsAdapter.ViewHolder>() {
 
-    var data: ArrayList<Int> = ArrayList()
+    var data: ArrayList<Fonts> = ArrayList()
     var selected = 0
 
     init {
-        data.add(R.font.abrilfatface_regular)
+        /*data.add(R.font.abrilfatface_regular)
         data.add(R.font.bigshoulders_regular)
         data.add(R.font.lato_regular)
         data.add(R.font.manrope_regular)
@@ -29,7 +29,28 @@ class TextFontsAdapter(
         //data.add(R.font.notosansjp_regular)
         data.add(R.font.playfairdisplay_regular)
         data.add(R.font.roboto_regular)
-        data.add(R.font.rubik_regular)
+        data.add(R.font.rubik_regular)*/
+        data.add(Fonts.ABRIL)
+        data.add(Fonts.BIGSHOULDER)
+        data.add(Fonts.LATO)
+        data.add(Fonts.MANROPE)
+        data.add(Fonts.MONTSERRAT)
+        data.add(Fonts.LIBRE)
+        data.add(Fonts.PLAY)
+        data.add(Fonts.ROBOTO)
+        data.add(Fonts.RUBIK)
+    }
+
+    enum class Fonts(val font: Int, val _name: String) {
+        ABRIL(R.font.abrilfatface_regular, "abril"),
+        BIGSHOULDER(R.font.bigshoulders_regular, "big shoulder"),
+        LATO(R.font.lato_regular, "lato"),
+        MANROPE(R.font.manrope_regular, "manrope"),
+        MONTSERRAT(R.font.montserrat_regular, "montserrat"),
+        LIBRE(R.font.librebaskerville_regular, "librebaskerville"),
+        PLAY(R.font.playfairdisplay_regular, "playfairdisplay"),
+        ROBOTO(R.font.roboto_regular, "roboto"),
+        RUBIK(R.font.rubik_regular, "rubik");
     }
 
     interface FontsCallbackListener{
@@ -66,10 +87,11 @@ class TextFontsAdapter(
         }*/
 
         holder.textFonts?.let {
-            it.typeface = ResourcesCompat.getFont(context, data[position])
+            it.text = data[position]._name
+            it.typeface = ResourcesCompat.getFont(context, data[position].font)
             it.setOnClickListener {
                 selected = position;
-                fontsCallbackListener.fontsCallback(data[position])
+                fontsCallbackListener.fontsCallback(data[position].font)
                 //notifyDataSetChanged()
             }
         }
