@@ -18,7 +18,8 @@ class MeasureCropView constructor(
     private val boxPaint: Paint
     private val handlePaint: Paint
     private var boxRect: RectF
-    private val handleSize = 30f
+    private val handleSize = 160f
+    private val handleSize_draw = 30f
     private var activeHandle: Handle? = null
     private var onMeasureChangeListener: OnMeasureChangeListener? = null
 
@@ -68,7 +69,7 @@ class MeasureCropView constructor(
     }
 
     private fun drawHandle(canvas: Canvas, x: Float, y: Float) {
-        canvas.drawCircle(x, y, handleSize, handlePaint)
+        canvas.drawCircle(x, y, handleSize_draw, handlePaint)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
