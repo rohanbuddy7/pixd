@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
         featureSticker = findViewById(R.id.imageSticker)
         featureText = findViewById(R.id.imageText)
         seekBarBrightness = findViewById(R.id.seekBarBrightness)
+        seekBarBrightness = findViewById(R.id.seekBarBrightness)
         seekBarText = findViewById(R.id.seekBarText)
         seekBarSticker = findViewById(R.id.seekBarSticker)
         frameControllerBrightness = findViewById(R.id.frameControllerBrightness)
@@ -197,6 +198,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
 
         seekBarSticker.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                println("rkhswjkh $progress")
                 moveableStickerForegroundView?.resizeForegroundBitmap(progress, progress);
             }
 
@@ -509,7 +511,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
                 }
             }
         } else {
-            Toast.makeText(this, "Please add a image to edit", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please add an image to edit", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -574,6 +576,7 @@ class MainActivity : AppCompatActivity(), MeasureCropView.OnMeasureChangeListene
                             foregroundStickerBitmap = foreground;
                         }
                     })
+                moveableStickerForegroundView?.resizeForegroundBitmap(seekBarSticker.progress, seekBarSticker.progress);
             }
         }
     }

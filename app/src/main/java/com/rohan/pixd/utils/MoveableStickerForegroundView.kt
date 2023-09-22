@@ -12,8 +12,8 @@ class MoveableStickerForegroundView : View {
     private var backgroundBitmap: Bitmap? = null
     private var foregroundBitmap: Bitmap? = null
     private var originalForegroundBitmap: Bitmap? = null
-    private var x = 100 // Initial X-coordinate
-    private var y = 200 // Initial Y-coordinate
+    public var x = 100 // Initial X-coordinate
+    public var y = 200 // Initial Y-coordinate
     private var isMoving = true // Flag to indicate if the foreground bitmap is being moved
     private var onMovementDoneListener: OnMovementDoneListener? = null // Flag to indicate if the foreground bitmap is being moved
 
@@ -45,6 +45,7 @@ class MoveableStickerForegroundView : View {
         this.foregroundBitmap = scaledOverlayBitmap
         this.originalForegroundBitmap = scaledOverlayBitmap
         this.onMovementDoneListener = onMovementDoneListener
+        onMovementDoneListener.onMovementChanged(x, y)
     }
 
     override fun onDraw(canvas: Canvas) {
